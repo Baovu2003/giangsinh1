@@ -21,24 +21,7 @@ body{
     height: 100%;
     overflow: hidden;
 }
-/* .bgr{
-    width: 100%;
-    height: 100vh;
-    position: relative;
-} */
-/* .image-bgr1{
-    width: 100%;
-    position: relative;
-    z-index: -1;
-}
-.image-bgr1 img{
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-} */
+
 .bgr-container{
     position: relative;
     width: 100%;
@@ -235,17 +218,18 @@ section{
     width: 100%;
     height: 100%;
 }
-.santa1{
+.santa1 {
     position: absolute;
     width: 500px;
     height: auto;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     transform: translate(-50%, 300px);
-    animation: santa1 4s linear forwards;
-    animation-delay: 10s;
+    animation: santa1 6s linear forwards; /* Thay đổi thời gian thành 9s */
+    animation-delay: 8s;
+    animation-iteration-count: infinite; /* Cho phép hoạt ảnh lặp lại vô hạn */
 }
+
 @keyframes santa1{
     0%{
         transform: translate(-50%, 300px);
@@ -294,7 +278,7 @@ section{
 }
 .box-reindeer{
     position: relative;
-    width: 500px;
+    width: 100%;
     height: 100vh;
     top: 0;
     left: 0;
@@ -304,7 +288,7 @@ section{
     width: 100%;
     height: 100vh;
     top: 200px;
-    left: -600px;
+    left: -2000px;
     transform: scaleX(-1) rotate(-10deg);
     animation: reindeer 8s linear forwards;
     animation-delay: 2.8s;
@@ -312,23 +296,23 @@ section{
 @keyframes reindeer{
     0%{
         top: 200px;
-        left: -600px;
+        left: -2000px;
         transform: scaleX(-1) rotate(5deg);
     }
     25%{
         top: 112.5px;
-        left: -150px;
-        transform: scaleX(-1) scale(0.8) rotate(5deg);
+        left: -1000px;
+        transform: scaleX(-1) scale(1) rotate(5deg);
     }
     50%{
         top: -25px;
-        left: 300px;
-        transform: scaleX(-1) scale(0.6) rotate(5deg);
+        left: 0px;
+        transform: scaleX(-1) scale(0.8) rotate(5deg);
     }
     75%{
         top: -137.5px;
-        left: 750px;
-        transform: scaleX(-1) scale(0.4) rotate(5deg);
+        left: 850px;
+        transform: scaleX(-1) scale(0.6) rotate(5deg);
     }
     100%{
         top: -250px;
@@ -429,36 +413,63 @@ section{
     position: absolute;
     width: 100px;
     height: 100px;
-    top: 0;
+    top: 250px;
     left: 50%;
-    transform: translate(-50%, -100px);
+    /* translate(-50%, -100px): Di chuyển hộp quà sang trái 50% chiều rộng của nó để căn giữa theo chiều ngang.
+     Đồng thời, nó di chuyển lên trên 100px.
+    scale(0.1): Ban đầu, thu nhỏ hộp quà xuống 10% kích thước ban đầu, làm cho nó xuất hiện rất nhỏ. */
+    transform: translate(-50%, -100px) scale(0.1); 
     display: flex;
     justify-content: center;
+    /* Đặt hộp quà hoàn toàn trong suốt (không nhìn thấy) khi trang được tải. */
+    opacity: 0; 
+    /* Đảm bảo rằng hộp quà không nhìn thấy và không thể tương tác cho đến khi được kích hoạt bởi animation. */
+    visibility: hidden; 
+    /* Giúp chuyển đổi mượt mà bất kỳ thay đổi nào về thuộc tính (chẳng hạn như opacity hoặc transform) trong 1 giây. */
     transition: all 1s;
     cursor: pointer;
-    animation: boxGift 5s forwards;
     z-index: 100000000;
-    animation-delay: 5s;
+    /* Áp dụng hai hiệu ứng animation: */
+    /* showBoxGift: Animation này chạy sau 5.7 giây.
+    Thời lượng là 0s, tức là chỉ làm thay đổi trạng thái hiển thị của hộp quà (từ ẩn sang hiện).
+    boxGift: Animation này bắt đầu sau 6 giây và kéo dài 5 giây để thực hiện việc di chuyển và phóng to hộp quà. */
+    animation: showBoxGift 0s forwards 5.7s, boxGift 5s forwards 6s;
 }
-@keyframes boxGift{
-    0%{
-        left: 50%;
-        transform: translate(-50%, -100px) rotate(45deg);
+
+@keyframes showBoxGift {
+    0% {
+        opacity: 0;
+        visibility: hidden;
     }
-    30%, 40%{
-        left: 50%;
-        transform: translate(-50%, 450px) rotate(45deg);
-    }
-    50%,100%{
-        left: 50%;
-        transform: translate(-50%, 450px) rotate(0deg);
-        transform-origin: bottom right;
+    100% {
+        opacity: 1;
+        visibility: visible; /* Make it visible after 5.7s */
     }
 }
-.box-gift:hover{
+
+/* 0%: Hộp quà bắt đầu nhỏ với tỷ lệ scale(0.1) và xoay 45 độ khi bắt đầu rơi từ vị trí top: -100px.
+50%: Trong quá trình rơi, hộp quà lớn dần lên với tỷ lệ scale(0.5) và giảm góc xoay xuống 30 độ.
+100%: Khi rơi xuống điểm cuối cùng (top: 450px), hộp quà đạt kích thước đầy đủ (scale(1)) và không còn xoay nữa (rotate(0deg)). */
+@keyframes boxGift {
+    0% {
+        left: 50%;
+        transform: translate(-50%, -100px) scale(0.1) rotate(45deg); 
+    }
+    50% {
+        left: 50%;
+        transform: translate(-50%, 90px) scale(0.5) rotate(30deg);
+    }
+    100% {
+        left: 50%;
+        transform: translate(-150%, 240px) scale(1) rotate(0deg); 
+    }
+}
+
+.box-gift:hover {
     filter: drop-shadow(0 0 20px red);
 }
-.box-gift .gift-bottom{
+
+.box-gift .gift-bottom {
     position: absolute;
     width: 90px;
     background: red;
@@ -466,10 +477,12 @@ section{
     border: 4px solid rgb(0, 0, 184);
     bottom: 0;
 }
-.gift-bottom{
+
+.gift-bottom {
     animation: rotategiftBottom 0.15s linear infinite,
                 haha 2s 19s linear infinite!important;
 }
+
 @keyframes haha{
     0%{
         left: 50%;
@@ -722,7 +735,7 @@ section{
     overflow: hidden;
 }
 .text1{
-    width: 100px;
+    width: 300px;
     padding: 5px 5px 0px 5px;
     margin-top: 70px;
     display: flex;
@@ -732,7 +745,7 @@ section{
 }
 .content-text p{
     font-size: 30px;
-    transform: translateY(-40px);
+    transform: translateY(-0px);
     font-family: 'Dancing Script', cursive;
     font-weight: bold;
 }
@@ -795,12 +808,13 @@ section{
 }
 .image-santa-content{
     position: relative;
-    left: 187px;
+    left: 500px;
     width: 100%;
 }
 .image-santa-content img{
     width: 200px;
 }
+
 .image-decorate{
     position: absolute;
     display: flex;
